@@ -3,116 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicação de Tarefas</title>
+    <title>Editar Tarefa</title>
 </head>
-<style>
-    * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    color: #333;
-}
-
-.container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-input[type="text"], input[type="date"] {
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-button {
-    padding: 10px;
-    font-size: 16px;
-    color: white;
-    background-color: #4CAF50;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
-ul {
-    list-style-type: none;
-    margin-top: 20px;
-}
-
-li {
-    background-color: #f9f9f9;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-li .task-info {
-    font-size: 16px;
-}
-
-li .task-date {
-    font-size: 14px;
-    color: #666;
-}
-
-li button {
-    background-color: #f44336;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-li button:hover {
-    background-color: #e53935;
-}
-</style>
 <body>
-    <div class="container">
-        <h1>Lista de Tarefas</h1>
-        <form id="task-form">
-            <input type="text" id="task-input" placeholder="Digite sua tarefa" required>
-            <input type="date" id="task-date" required>
-            <button type="submit">Adicionar Tarefa</button>
-        </form>
-        
-        <ul id="task-list">
-            <!-- As tarefas serão exibidas aqui -->
-        </ul>
-    </div>
+    <h1>Editar Tarefa</h1>
+    <form id="form-tarefa" method="POST">
+        <input type="hidden" id="tarefa-id">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <br>
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" name="descricao" required></textarea>
+        <br>
+        <label for="data_inicio">Data Início:</label>
+        <input type="datetime-local" id="data_inicio" name="data_inicio" required>
+        <br>
+        <label for="data_fim">Data Fim:</label>
+        <input type="datetime-local" id="data_fim" name="data_fim" required>
+        <br>
+        <button type="submit">Salvar</button>
+    </form>
 
-    <script src="scripts.js"></script>
+    <script>
+        // Supondo que você tenha uma função que recupera os dados da tarefa selecionada
+        function carregarTarefaParaEdicao(id) {
+            fetch(`/tarefa/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('tarefa-id').value = data.id;
+                    document.getElementById('nome').value = data.nome;
+                    document.getElementById('descricao').value = data.descricao;
+                    document.getElementById('data_inicio').value = data.data_inicio;
+                    document.getElementById('data_fim').value = data.data_fim;
+                });
+        }
+
+        // Evento de envio do formulário para edição
+        document.getElementById('form-tarefa').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const id = document.getElementById('tarefa-id').value;
+            const nome = document.getElementById('nome').value;
+            const descricao = document.getElementById('descricao').value;
+            const data_inicio = document.getElementById('data_inicio').value;
+            const data_fim = document.getElementById('data_fim').value;
+
+            const dados = {
+                nome: nome,
+                descricao: descricao,
+                data_inicio: data_inicio,
+                data_fim: data_fim
+            };
+
+            fetch(`/tarefa/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Tarefa editada com sucesso!');
+            })
+            .catch(error => {
+                console.error('Erro ao editar tarefa:', error);
+            });
+        });
+    </script>
 </body>
 </html>
+

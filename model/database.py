@@ -53,8 +53,21 @@ class Database :
         except Error as e:
             print(f'Erro de execução: {e}')
             return None
-# Área 51    
-db = Database()
-db.conectar()
-print(db.consultar('select * from tarefa'))
-db.desconectar()
+class Tarefa:
+    def __init__(self, id, nome, descricao, data_inicio, data_fim):
+        self.id = id
+        self.nome = nome
+        self.descricao = descricao
+        self.data_inicio = data_inicio
+        self.data_fim = data_fim
+    
+    def editar(self, nome=None, descricao=None, data_inicio=None, data_fim=None):
+        """Método para editar os atributos de uma tarefa"""
+        if nome:
+            self.nome = nome
+        if descricao:
+            self.descricao = descricao
+        if data_inicio:
+            self.data_inicio = data_inicio
+        if data_fim:
+            self.data_fim = data_fim
